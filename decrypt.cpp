@@ -11,10 +11,10 @@ enum Caracter {esp = 0, a = 1, b = 5, c = 3, d = 11, e = 9, f = 7, g = 15,
                 v = 53, w = 46, x = 51, y = 59, z = 57, c_ced = 55,
                 e_ai = 63, e_gr = 54, u_gr = 62, un = 33, deux = 37, 
                 trois = 35, quatre = 43, cinq = 41, six = 39, sept = 47, 
-                huit = , neuf = , zero = , virg = , pts_virg = , deux_pts = ,
-                pts = , pts_int = ,pts_exc = , trem = , par_dr = ,
-                par_gau = 52, ast = 24, apost = 16, tir = 48, Ital = ,
-                Maj = 34, Num = 32};
+                huit = 45, neuf = 38, zero = 58, virg = 4, pts_virg = 20,
+                deux_pts = 12, pts = 44, pts_int = 36, pts_exc = 28, 
+                trem = 60, par_gau = 52, par_dr = 56, ast = 24, apost = 16,
+                tir = 48, Ital = 42, Maj = 34, Num = 32};
 Caracter x = a;
 
 
