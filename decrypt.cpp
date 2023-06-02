@@ -1,4 +1,7 @@
-
+//	On effectue un traitement binaire avec ces informations. 
+//Chaque résultat du traitement binaire renvoie un caractère bien précis.
+//		Les résultats vident renvoie un espace.
+//On stocke le résultat du traitement binaire dans une file. 
 
 
 
