@@ -66,27 +66,27 @@ Carac = [" ", #0
     "ù", #62 
     "é"] #63
     
-
-list_1 = [1,43,63,23,12,0,34,62,12,43,29,37,0,23,12,2,56,7,3,0,1,2]
+#J'aime la choucroute!
+list_1 = [34,14,16,1,6,19,9,0,21,1,0,3,13,25,49,3,29,25,49,30,9,28]
 
 def lecture(list_braille):
     x = len(list_braille)
     list_retour = 'Texte : '
     sauv_maj = 0
     for i in range(x):
-        lettre = list_braille[i]
-        lettre = Carac[lettre]
+        verif_maj = list_braille[i]
+        lettre = Carac[verif_maj]
         print("i = ", i)
         print("La lettre est = ", lettre)
-        if lettre == 34:
+        if verif_maj == 34:
             sauv_maj = 1
         else:
             if sauv_maj == 1:
-                list_retour =+ lettre.upper()
+                list_retour = list_retour + lettre.upper()
                 sauv_maj = 0
             else:
                 print 
-                list_retour =+ lettre
+                list_retour = list_retour + lettre
         print("La liste retour est = ", list_retour)
 
     return list_retour
