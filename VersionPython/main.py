@@ -67,7 +67,7 @@ Carac = [" ", #0
     "é"] #63
     
 #J'aime la choucroute!
-list_1 = [34,14,16,1,6,19,9,0,21,1,0,3,13,25,49,3,29,25,49,30,9,28]
+list_1 = [34,14,16,1,6,19,9,0,21,1,0,3,1]
 
 def lecture(list_braille):
     x = len(list_braille)
