@@ -3,7 +3,7 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 
 # Lecture de l'image
-img = cv.imread('braille14.png', cv.IMREAD_GRAYSCALE)
+img = cv.imread('braille15.png', cv.IMREAD_GRAYSCALE)
 assert img is not None, "file could not be read, check with os.path. exists()"
 
 # Top-hat
@@ -27,7 +27,7 @@ circles = cv.HoughCircles(img_erosion, cv.HOUGH_GRADIENT, 1, 6, param1=16, param
 # Trace des cercles detectes
 if circles is not None:
     circles = np.uint16(np.around(circles))
-    for i in circles[0, :]:
+    for i in circles[0,:]:
         # Trace du contour du cercle
         cv.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
         # Trace du centre du cercle
@@ -43,12 +43,20 @@ for i in circles[:,1]:
         repere_hauteur.append(i)
 
 repere_hauteur.sort()
+count = []
 for i in range(len(repere_hauteur)-2):
     if repere_hauteur[i+1]-repere_hauteur[i] <= 2:
         repere_hauteur.append(int((repere_hauteur[i]+repere_hauteur[i+1])/2))
-        repere_hauteur.pop(i)
-        repere_hauteur.pop(i)
-        repere_hauteur.sort()
+        for j,val in enumerate (circles[:,1]):
+            if val == repere_hauteur[i+1] or val == repere_hauteur[i]:
+                circles[j,1] = repere_hauteur[-1]
+        count.append(i)
+
+for i in count:
+    repere_hauteur.pop(i)
+    repere_hauteur.pop(i)
+    repere_hauteur.sort()
+
 
 # Classement des longueurs des cercles
 repere_longueur = []
@@ -57,12 +65,23 @@ for i in circles[:,0]:
         repere_longueur.append(i)
         
 repere_longueur.sort()
-for i in range(len(repere_longueur)-3):
+count2 = []
+for i in range(len(repere_longueur)-2):
     if repere_longueur[i+1]-repere_longueur[i] <= 2:
         repere_longueur.append(repere_longueur[i+1])
-        repere_longueur.pop(i)
-        repere_longueur.pop(i)
-        repere_longueur.sort()
+        for j,val in enumerate (circles[:,0]):
+            if val == repere_longueur[i+1] or val == repere_longueur[i]:
+                circles[j,0] = repere_longueur[-1]
+        count.append(i)
+
+for i in count2:
+    repere_longueur.pop(i)
+    repere_longueur.pop(i)
+    repere_longueur.sort()
+
+print(repere_hauteur)
+print(repere_longueur)
+print(circles)
 
 # Calcul des distances entre deux cercles
 espace1 = repere_longueur[-1]
@@ -82,6 +101,10 @@ for i in range(len(repere_longueur)-2):
 #         distance_petite = distance   
             
 # print(distance_petite)
+
+# Regroupement des cercles
+
+
 
 cv.namedWindow('detected circles', cv.WINDOW_NORMAL)
 cv.resizeWindow('detected circles', 800, 600)
