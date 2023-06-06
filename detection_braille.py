@@ -3,7 +3,7 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 
 # Lecture de l'image
-img = cv.imread('braille15.png', cv.IMREAD_GRAYSCALE)
+img = cv.imread('braille14.png', cv.IMREAD_GRAYSCALE)
 assert img is not None, "file could not be read, check with os.path. exists()"
 
 # Top-hat
@@ -50,11 +50,11 @@ for i in range(len(repere_hauteur)-2):
         for j,val in enumerate (circles[:,1]):
             if val == repere_hauteur[i+1] or val == repere_hauteur[i]:
                 circles[j,1] = repere_hauteur[-1]
-        count.append(i)
+        count.append(repere_hauteur[i])
+        count.append(repere_hauteur[i+1])
 
 for i in count:
-    repere_hauteur.pop(i)
-    repere_hauteur.pop(i)
+    repere_hauteur.remove(i)
     repere_hauteur.sort()
 
 
@@ -72,16 +72,14 @@ for i in range(len(repere_longueur)-2):
         for j,val in enumerate (circles[:,0]):
             if val == repere_longueur[i+1] or val == repere_longueur[i]:
                 circles[j,0] = repere_longueur[-1]
-        count.append(i)
+        count.append(repere_longueur[i])
+        count.append(repere_longueur[i+1])
 
 for i in count2:
-    repere_longueur.pop(i)
-    repere_longueur.pop(i)
+    repere_longueur.remove(i)
     repere_longueur.sort()
 
-print(repere_hauteur)
-print(repere_longueur)
-print(circles)
+
 
 # Calcul des distances entre deux cercles
 espace1 = repere_longueur[-1]
