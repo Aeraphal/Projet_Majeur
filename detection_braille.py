@@ -24,7 +24,6 @@ cimg = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
 #Detection des cercles
 circles = cv.HoughCircles(img_erosion, cv.HOUGH_GRADIENT, 1, 6, param1=16, param2=8, minRadius=0, maxRadius=10)
 
-min_y = 100
 # Trace des cercles detectes
 if circles is not None:
     circles = np.uint16(np.around(circles))
@@ -33,23 +32,60 @@ if circles is not None:
         cv.circle(cimg,(i[0],i[1]),i[2],(0,255,0),2)
         # Trace du centre du cercle
         cv.circle(cimg,(i[0],i[1]),2,(0,0,255),3)
-        
-        # Pour quadrillage
-        if i[1] < min_y:
-            min_y = i[1]
 else:
     print('Aucun cercle trouvé') 
 
-print(circles)
-print(min_y)
+# Classement des hauteurs des cercles
+repere_hauteur = []
+circles = circles[0]
+for i in circles[:,1]:
+    if i not in repere_hauteur:
+        repere_hauteur.append(i)
+
+repere_hauteur.sort()
+for i in range(len(repere_hauteur)-2):
+    if repere_hauteur[i+1]-repere_hauteur[i] <= 2:
+        repere_hauteur.append(int((repere_hauteur[i]+repere_hauteur[i+1])/2))
+        repere_hauteur.pop(i)
+        repere_hauteur.pop(i)
+        repere_hauteur.sort()
+
+# Classement des longueurs des cercles
+repere_longueur = []
+for i in circles[:,0]:
+    if i not in repere_longueur:
+        repere_longueur.append(i)
+        
+repere_longueur.sort()
+for i in range(len(repere_longueur)-3):
+    if repere_longueur[i+1]-repere_longueur[i] <= 2:
+        repere_longueur.append(repere_longueur[i+1])
+        repere_longueur.pop(i)
+        repere_longueur.pop(i)
+        repere_longueur.sort()
+
+# Calcul des distances entre deux cercles
+espace1 = repere_longueur[-1]
+espace2 = repere_longueur[-2]
+distance_petite = 500
+distance = 0
+repere_longueur_final = []
+repere_hauteur_final = []
+for i in range(len(repere_longueur)-2):
+    distance = repere_longueur[i+1]-repere_longueur[i]
+    if espace1 > distance:
+        espace1 = distance
+    if abs(espace1 - distance) >= 2:
+        if espace2 > distance:
+            espace2 = distance
+#     if distance_petite > distance:
+#         distance_petite = distance   
+            
+# print(distance_petite)
 
 cv.namedWindow('detected circles', cv.WINDOW_NORMAL)
 cv.resizeWindow('detected circles', 800, 600)
-cv.line(cimg, (0, min_y), (500, min_y), (0, 0, 255))
 cv.imshow('detected circles',cimg)
-
-# Trace du quadrillage
-
-
 cv.waitKey(0)
 cv.destroyAllWindows()
+
