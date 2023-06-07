@@ -3,20 +3,12 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 
 # Lecture de l'image
-img = cv.imread('braille14.png', cv.IMREAD_GRAYSCALE)
+img = cv.imread('braille15.png', cv.IMREAD_GRAYSCALE)
 assert img is not None, "file could not be read, check with os.path. exists()"
 
-# Top-hat
+# erosion
 filterSize =(3, 3)
 kernel = cv.getStructuringElement(cv.MORPH_RECT, filterSize)
-tophat_img = cv.morphologyEx(img, cv.MORPH_TOPHAT, kernel)
-
-# Seuillage simple
-img = cv.split(img)[0]
-(retVal, newImg) = cv.threshold(img, 10, 255, cv.THRESH_BINARY)
-
-# Ouverture de l'image
-img_dilation = cv.dilate(img, kernel, iterations=1)
 img_erosion = cv.erode(img, kernel, iterations=1)
 
 cimg = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
@@ -42,9 +34,10 @@ for i in circles[:,1]:
     if i not in repere_hauteur:
         repere_hauteur.append(i)
 
+# Ajout des différentes hauteurs dans repre_hauteur
 repere_hauteur.sort()
 count = []
-for i in range(len(repere_hauteur)-2):
+for i in range(len(repere_hauteur)-1):
     if repere_hauteur[i+1]-repere_hauteur[i] <= 2:
         repere_hauteur.append(int((repere_hauteur[i]+repere_hauteur[i+1])/2))
         for j,val in enumerate (circles[:,1]):
@@ -53,10 +46,16 @@ for i in range(len(repere_hauteur)-2):
         count.append(repere_hauteur[i])
         count.append(repere_hauteur[i+1])
 
+#Suppression des valeurs proches
 for i in count:
     repere_hauteur.remove(i)
-    repere_hauteur.sort()
+repere_hauteur.sort()
 
+
+# Hauteurs classés par ligne
+repere_hauteur_final = []
+for i in range(int(len(repere_hauteur)/3)):
+    repere_hauteur_final.append(repere_hauteur[i*3:(i+1)*3])
 
 # Classement des longueurs des cercles
 repere_longueur = []
@@ -66,28 +65,36 @@ for i in circles[:,0]:
         
 repere_longueur.sort()
 count2 = []
-for i in range(len(repere_longueur)-2):
+for i in range(len(repere_longueur)-1):
     if repere_longueur[i+1]-repere_longueur[i] <= 2:
         repere_longueur.append(repere_longueur[i+1])
         for j,val in enumerate (circles[:,0]):
             if val == repere_longueur[i+1] or val == repere_longueur[i]:
                 circles[j,0] = repere_longueur[-1]
-        count.append(repere_longueur[i])
-        count.append(repere_longueur[i+1])
+        count2.append(repere_longueur[i])
+        count2.append(repere_longueur[i+1])
 
 for i in count2:
     repere_longueur.remove(i)
-    repere_longueur.sort()
+repere_longueur.sort()
 
+# Longueurs classées par ligne
+repere_longueur_final = [[] for x in range(len(repere_hauteur_final))]
+for i in range(len(circles)):
+    for j in range(len(repere_hauteur_final)):
+        for k in range(len(repere_longueur)):
+            if circles[i,0] == repere_longueur[k] and circles[i,1] in repere_hauteur_final[j]:
+                repere_longueur_final[j].append(repere_longueur[k])
+
+for i in range(len(repere_longueur_final)):
+    repere_longueur_final[i].sort()
+print(repere_longueur_final)
 
 
 # Calcul des distances entre deux cercles
 espace1 = repere_longueur[-1]
 espace2 = repere_longueur[-2]
-distance_petite = 500
 distance = 0
-repere_longueur_final = []
-repere_hauteur_final = []
 for i in range(len(repere_longueur)-2):
     distance = repere_longueur[i+1]-repere_longueur[i]
     if espace1 > distance:
@@ -95,13 +102,6 @@ for i in range(len(repere_longueur)-2):
     if abs(espace1 - distance) >= 2:
         if espace2 > distance:
             espace2 = distance
-#     if distance_petite > distance:
-#         distance_petite = distance   
-            
-# print(distance_petite)
-
-# Regroupement des cercles
-
 
 
 cv.namedWindow('detected circles', cv.WINDOW_NORMAL)
