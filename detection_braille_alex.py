@@ -71,7 +71,7 @@ Carac = [" ", #0
 
 
 # Lecture de l'image
-img = cv.imread('braille16.png', cv.IMREAD_GRAYSCALE)
+img = cv.imread('braille14.png', cv.IMREAD_GRAYSCALE)
 assert img is not None, "file could not be read, check with os.path. exists()"
 
 # erosion
@@ -192,7 +192,7 @@ for i in range(len(repere_longueur_final[0])-2):
         if espace1+rayon > distance :                  # distance < espace1 < distance + 2
             espace1 = distance
         elif espace2 > distance and (espace1 + rayon) < distance :
-            espace2 = distance  + rayon
+            espace2 = distance  
 espace_final = (espace1 + espace2) / 2
 
 list_caractere = []
@@ -203,7 +203,7 @@ for i in range(len(repere_hauteur_final_2)):
     for k in range(len(repere_hauteur_final_2[i])-1):
         if repere_longueur_final[i][k+1] - repere_longueur_final[i][k] < espace_final:
             caractere.append([repere_longueur_final[i][k+1],repere_hauteur_final_2[i][k+1]])
-        elif repere_longueur_final[i][k+1] - repere_longueur_final[i][k] > espace_final*2: 
+        elif repere_longueur_final[i][k+1] - repere_longueur_final[i][k] > espace_final+espace1: 
             list_caractere[i].append(caractere)
             caractere = [[repere_longueur_final[i][k+1],repere_hauteur_final_2[i][k+1]]]
             list_caractere[i].append([])
