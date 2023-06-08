@@ -71,7 +71,7 @@ Carac = [" ", #0
 
 
 # Lecture de l'image
-img = cv.imread('braille14.png', cv.IMREAD_GRAYSCALE)
+img = cv.imread('braille16.png', cv.IMREAD_GRAYSCALE)
 assert img is not None, "file could not be read, check with os.path. exists()"
 
 # erosion
@@ -189,20 +189,18 @@ distance = 0
 for i in range(len(repere_longueur_final[0])-2):
     distance = repere_longueur_final[0][i+1]-repere_longueur_final[0][i]
     if distance > rayon:
-        if espace1 >= distance :                  # distance < espace1 < distance + 2
+        if espace1+rayon > distance :                  # distance < espace1 < distance + 2
             espace1 = distance
-        elif espace2 > distance :
-            espace2 = distance
+        elif espace2 > distance and (espace1 + rayon) < distance :
+            espace2 = distance  + rayon
 espace_final = (espace1 + espace2) / 2
 
-print("espace 1 = ", espace1, ", l'espace 2 = ", espace2, " et l'espace final = ", espace_final)
-
-list_caractere = [[],[]]
+list_caractere = []
 caractere = []
 for i in range(len(repere_hauteur_final_2)):
+    list_caractere.append([])
     caractere = [[repere_longueur_final[i][0], repere_hauteur_final_2[i][0]]]
     for k in range(len(repere_hauteur_final_2[i])-1):
-        print("barbare = ", repere_longueur_final[i][k+1] - repere_longueur_final[i][k], "caractere actuel = ", caractere)
         if repere_longueur_final[i][k+1] - repere_longueur_final[i][k] < espace_final:
             caractere.append([repere_longueur_final[i][k+1],repere_hauteur_final_2[i][k+1]])
         elif repere_longueur_final[i][k+1] - repere_longueur_final[i][k] > espace_final*2: 
@@ -232,12 +230,16 @@ for i in range(len(list_caractere)):
                 if max_long < list_caractere[i][j][k][0]:
                     max_long = list_caractere[i][j][k][0]
             if max_long == min_long:
-                if list_caractere[i][j+1] != []:
-                    if list_caractere[i][j+1][0][0] - list_caractere[i][j][-1][0] > espace_final :
-                        min_long = min_long - espace1
+                if i < len(list_caractere[i])-1:
+                    if j < len(list_caractere[i]) -1 :
+                        if (list_caractere[i][j+1] != []):
+                            if list_caractere[i][j+1][0][0] - list_caractere[i][j][-1][0] > espace_final :
+                                min_long = min_long - espace1
+                            else:
+                                max_long = max_long + espace1
                     else:
                         max_long = max_long + espace1
-                else:
+                else : 
                     max_long = max_long + espace1
             rep_long = [min_long, max_long]
 
@@ -248,6 +250,7 @@ for i in range(len(list_caractere)):
                     # print([rep_long[v],rep_haut[u]] in list_caractere[i][j])
                     if ([rep_long[v],rep_haut[u]] in list_caractere[i][j]):
                         tot = tot + 2**(2*u+v)
+
 
         list_caractere_uint8.append(tot)
 
@@ -280,6 +283,8 @@ for i in range(len(list_caractere_uint8)):
 
 print(k)
 
+print("espace 1 = ", espace1, ", l'espace 2 = ", espace2, " et l'espace final = ", espace_final)
+print(repere_longueur_final)
 
 cv.namedWindow('detected circles', cv.WINDOW_NORMAL)
 cv.resizeWindow('detected circles', 800, 600)
